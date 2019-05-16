@@ -134,7 +134,7 @@
     let countryData = allYearsData.filter((row) => row["location"] == country);
     let timeData = countryData.map((row) => row["time"]);
     let lifeExpectancyData = countryData.map((row) => row["pop_mlns"]);
-
+    console.log(lifeExpectancyData)
     let minMax = findMinMax(timeData, lifeExpectancyData);
       //svgLineGraph.selectAll('g').remove();
     svgLineGraph.selectAll('g').remove()
@@ -142,7 +142,7 @@
     plotLineGraph(funcs, countryData, country);
 
     
-    console.log(data)
+    //console.log(data)
 
       let locations = data.map((row) => row["location"]);
 
@@ -150,17 +150,20 @@
         return self.indexOf(value) === index;
       }
 
-      let unlocations = locations.filter(onlyUnique)
+      let unlocations = locations.filter(onlyUnique).sort();
   
       let dropdown = d3.select("body").append("select").on('change', function () {
         var selected = this.value;
         //console.log(selected);
-        var thisObject = allYearsData.filter(country => country.location == selected);
-        console.log(thisObject.location)
+        var thisObject = allYearsData.filter(country => country["location"] == selected);
+        console.log(thisObject)
+        //console.log(thisObject.map((row) => row["AUS"]))
         svgLineGraph.selectAll('g').remove();
         svgLineGraph.selectAll('path').remove();
         svgLineGraph.selectAll('text').remove();
-        let minMax = findMinMax(thisObject.map((row) => row["time"]), thisObject.map((row) => row["pop_mlns"]));
+        let minMax = findMinMax(thisObject.map((row) => +row["time"]), thisObject.map((row) => +row["pop_mlns"]));
+        console.log(minMax)
+
         let funcs = drawAxes(minMax, "time", "pop_mlns", svgLineGraph, { min: 50, max: 450 }, { min: 50, max: 450 });
         plotLineGraph(funcs, thisObject, selected);
       });
@@ -179,7 +182,6 @@
 
   function plotLineGraph(funcs, countryData, country) {
     //let xMap = funcs.
-    console.log(funcs)
 
     let line = d3.line()
       .x((d) => funcs.x(d))
@@ -243,13 +245,16 @@
     let xMap = function (d) { return xScale(xValue(d)); };
 
     // plot x-axis at bottom of SVG
-    let xAxis = d3.axisBottom().scale(xScale);
+    let xAxis = d3.axisBottom().scale(xScale).tickFormat(d3.format("d"));
     svg.append("g")
       .attr('transform', 'translate(0, ' + rangeY.max + ')')
       .call(xAxis);
 
     // return y value from a row of data
     let yValue = function (d) { return +d[y] }
+
+    console.log(rangeY.min)
+    console.log(limits.yMax)
 
     // function to scale y
     let yScale = d3.scaleLinear()
