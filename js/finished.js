@@ -76,7 +76,7 @@
       .attr('x', 50)
       .attr('y', 30)
       .style('font-size', '14pt')
-      .text("Countries by Life Expectancy and Fertility Rate");
+      .text("Life Expectancy vs. Fertility Rate");
 
     svgScatterPlot.append('text')
       .attr('x', 130)
@@ -123,7 +123,7 @@
       .append('circle')
       .attr('cx', xMap)
       .attr('cy', yMap)
-      .attr('r', (d) => pop_map_func(d["pop_mlns"]))
+      .attr('r', 2)
       .attr('fill', "#4286f4")
 
   }
@@ -133,12 +133,12 @@
     svgLineGraph.html("");
     let countryData = allYearsData.filter((row) => row["location"] == country);
     let timeData = countryData.map((row) => row["time"]);
-    let lifeExpectancyData = countryData.map((row) => row["life_expectancy"]);
+    let lifeExpectancyData = countryData.map((row) => row["pop_mlns"]);
 
     let minMax = findMinMax(timeData, lifeExpectancyData);
       //svgLineGraph.selectAll('g').remove();
     svgLineGraph.selectAll('g').remove()
-    let funcs = drawAxes(minMax, "time", "life_expectancy", svgLineGraph, { min: 50, max: 450 }, { min: 50, max: 450 });
+    let funcs = drawAxes(minMax, "time", "pop_mlns", svgLineGraph, { min: 50, max: 450 }, { min: 50, max: 450 });
     plotLineGraph(funcs, countryData, country);
 
     
@@ -160,8 +160,8 @@
         svgLineGraph.selectAll('g').remove();
         svgLineGraph.selectAll('path').remove();
         svgLineGraph.selectAll('text').remove();
-        let minMax = findMinMax(thisObject.map((row) => row["time"]), thisObject.map((row) => row["life_expectancy"]));
-        let funcs = drawAxes(minMax, "time", "life_expectancy", svgLineGraph, { min: 50, max: 450 }, { min: 50, max: 450 });
+        let minMax = findMinMax(thisObject.map((row) => row["time"]), thisObject.map((row) => row["pop_mlns"]));
+        let funcs = drawAxes(minMax, "time", "pop_mlns", svgLineGraph, { min: 50, max: 450 }, { min: 50, max: 450 });
         plotLineGraph(funcs, thisObject, selected);
       });
   
@@ -225,36 +225,7 @@
     svgLineGraph.append('text')
       .attr('transform', 'translate(15, 300)rotate(-90)')
       .style('font-size', '10pt')
-      .text('Life Expectancy (years)');
-
-      // console.log(data)
-
-      // let locations = data.map((row) => row["location"]);
-
-      // function onlyUnique(value, index, self) {
-      //   return self.indexOf(value) === index;
-      // }
-
-      // let unlocations = locations.filter(onlyUnique)
-  
-      // let dropdown = d3.select("body").append("select").on('change', function () {
-      //   var selected = this.value;
-      //   //console.log(selected);
-      //   var thisObject = allYearsData.filter(country => country.location == selected);
-      //   console.log(thisObject);
-  
-      //   makeLineGraph(thisObject.location);
-      // });
-  
-  
-      // dropdown.selectAll("option")
-      //   .data(unlocations)
-      //   .enter()
-      //   .append("option")
-      //   .text((d) => {
-      //     return d;
-      //   })
-      //   .attr("value", (d) => d)
+      .text('Population Size (mil)');
 
   }
 
